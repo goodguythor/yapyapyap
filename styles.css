@@ -1,0 +1,33 @@
+.web-title{
+    text-align: center;
+    font-size: 64px;
+}
+
+main{
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+}
+
+.chat-box{
+    display: flex;
+    flex-direction: row;
+    width: 700px;
+    height: 500px;
+    border: 2px solid black;
+    box-sizing: border-box;
+    padding-left: 10px;
+    margin: 20px;
+}
+
+.vl{
+    width: 2px;
+    background-color: black;
+    height: 100%;
+    margin-left: 200px;
+}
+
+.chat{
+
+}
