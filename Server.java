@@ -20,19 +20,43 @@ public class Server{
     public void run() throws IOException{
         this.server = new ServerSocket(port);
 
-        System.out.println("Server is running on port " + port + "and is waiting for connections");
+        System.out.println("Server is running on port " + port + " and is waiting for connections");
         new Thread(() -> {
-            Scanner s = new Scanner(System.in);
-            while(s.hasNextLine()){
-                String msg = s.nextLine();
-                broadcastMsg(msg);
+            String msg;
+            InputStreamReader in = new InputStreamReader(System.in);
+            try(BufferedReader s = new BufferedReader(in)){
+                while((msg = s.readLine()) != null){
+                    msg.trim();
+                    if(msg.isEmpty()) continue;
+                    if(msg.charAt(0)=='@'){
+                        int space = msg.indexOf(" ");
+                        if(space!=-1){
+                            String target = msg.substring(1, space);
+                            sendMsg(msg.substring(space+1), target);
+                        }
+                    }
+                    else{
+                        broadcastMsg(msg);
+                    }
+                }
+            } 
+            catch (IOException e){
+                e.printStackTrace();
             }
-            s.close();
+            finally{
+                try{
+                    in.close();
+                }
+                catch(IOException e){
+                    e.printStackTrace();
+                }
+            }
         }).start();
 
         while(true){
             Socket clientSocket = this.server.accept();
-            BufferedReader s = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            InputStreamReader in = new InputStreamReader(clientSocket.getInputStream());
+            BufferedReader s = new BufferedReader(in);
             String clientName = s.readLine();
             System.out.println("New client connected: " +   clientName + "\nHost: " + clientSocket.getInetAddress().getHostAddress());
             User client = new User(clientSocket, clientName);
@@ -41,23 +65,28 @@ public class Server{
         }
     }
 
-    public void broadcastClient(){
+    public void broadcastMsg(String msg){
         for(User client:this.clients){
-            client.getOutStream().println(this.clients);
+            client.getOutStream().println("Public: " + msg);
         }
     }
 
-    public void broadcastMsg(String msg){
+    public void sendMsg(String msg, String target){
         for(User client:this.clients){
-            client.getOutStream().println(msg);
+            if(client.getName().equals(target)){
+                System.out.println("To: " + target + "\n" + msg);
+                client.getOutStream().println("From: Server\n" + msg);
+                return;
+            }
         }
+        System.out.println("Recipient didn't exist");   
     }
 
     public void sendMsg(String msg,User sender,String target){
         for(User client:this.clients){
             if(client.getName().equals(target)){
-                sender.getOutStream().println(msg);
-                client.getOutStream().println(msg);
+                sender.getOutStream().println("To: " + target + "\n" + msg);
+                client.getOutStream().println("From: " + sender.getName() + "\n" + msg);
                 return;
             }
         }
@@ -84,7 +113,16 @@ class ClientHandler implements Runnable{
             while((msg = s.readLine()) != null){
                 msg.trim();
                 if(msg.isEmpty()) continue;
-                this.server.broadcastMsg(msg);
+                if(msg.charAt(0)=='@'){
+                    int space = msg.indexOf(" ");
+                    if(space!=-1){
+                        String target = msg.substring(1, space);
+                        server.sendMsg(msg.substring(space+1), client, target);
+                    }
+                }
+                else{
+                    this.server.broadcastMsg(msg);
+                }
             }
         } 
         catch (IOException e){
@@ -98,7 +136,6 @@ class ClientHandler implements Runnable{
                 e.printStackTrace();
             }
             this.server.removeClient(client);
-            this.server.broadcastClient();
         }
     }
 }
