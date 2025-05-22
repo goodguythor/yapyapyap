@@ -17,17 +17,136 @@ main{
     height: 500px;
     border: 2px solid black;
     box-sizing: border-box;
-    padding-left: 10px;
     margin: 20px;
 }
 
-.vl{
-    width: 2px;
-    background-color: black;
+.left-panel{
+    display: flex;    
+    flex-direction: column;
+    justify-content: flex-start;
+    width: 100px;            
     height: 100%;
-    margin-left: 200px;
+}
+
+.vl{
+    border: 1px solid black;
+    height: 100%;
+}
+
+.contact, .contact-name{
+    text-align: center;
+    font-size: 24px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.contact-line, .chat-line, .message-line{
+    width: 100%;
+    border: 1px solid black;
+}
+
+.right-panel{
+    flex: 1;
+    display: flex;    
+    flex-direction: column;
+    width: 100px;            
+    height: 100%;
+}
+
+.contact-button{
+    align-self: center;
+    width: 100%;
+    padding-left: 10px;
+    padding-right: 10px;
+    cursor: pointer;    
+    text-align: center;
+    font-size: 16px;
+    border: 1px transparent;
+    border-radius: 5px;
+    background-color: wheat;
+}
+
+.contact-list{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .chat{
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    gap: 10px;
+}
 
+.recipient, .sender{
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 2px;
+    width: fit-content;
+    text-align: center;
+}
+
+.name-line{
+    margin: 0;
+}
+
+.message-line{
+    margin-top: 10px;
+    margin-bottom: 10px;   
+}
+
+.recipient{
+    align-self: flex-start;
+    background-color: #fce4ec;
+    margin-left: 10px;
+}
+
+.sender{
+    align-self: flex-end;
+    background-color: #e0ecfa;
+    margin-right: 10px; 
+}
+
+.message{
+    word-wrap: break-word;
+    font-size: 16px;
+}
+
+.name{
+    font-weight: bold;
+    font-size: 8px;
+}
+
+.message-box{
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+}
+
+.text-box{
+    flex-grow: 1;
+    height: 50px;
+    font-size: 16px;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+.send-button{
+    height: 50px;
+    font-size: 16px;
+    font-weight: bold;
+    border: 1px solid black;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  text-align: center;
 }
