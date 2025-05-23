@@ -1,7 +1,7 @@
+package org.example;
 import java.io.*;
 import java.net.*;
 import java.util.List;
-import java.util.Scanner;
 
 public class Server{
     private List<User> clients;
@@ -55,13 +55,26 @@ public class Server{
 
         while(true){
             Socket clientSocket = this.server.accept();
-            InputStreamReader in = new InputStreamReader(clientSocket.getInputStream());
-            BufferedReader s = new BufferedReader(in);
-            String clientName = s.readLine();
-            System.out.println("New client connected: " +   clientName + "\nHost: " + clientSocket.getInetAddress().getHostAddress());
-            User client = new User(clientSocket, clientName);
+            User client = new User(clientSocket);
             clients.add(client);
-            new Thread(new ClientHandler(this, client)).start();
+            new Thread(() -> {
+                try{
+                    BufferedReader r = new BufferedReader(new InputStreamReader(client.getInStream()));
+                    String name = r.readLine();
+                    if (name != null && !name.trim().isEmpty()) {
+                        name = name.trim();
+                        client.setName(name);
+                        System.out.println("New client connected: " + name + "\nHost: " + clientSocket.getInetAddress().getHostAddress());
+                        new Thread(new ClientHandler(this, client)).start();
+                    } else {
+                        client.getOutStream().println("Username required.");
+                        clientSocket.close();
+                    }
+                }
+                catch(IOException e){
+                    e.printStackTrace();
+                }
+            }).start();
         }
     }
 
@@ -148,11 +161,10 @@ class User{
     private int clientID;
     private static int clientCount=0;
 
-    public User(Socket socket,String name) throws IOException{
+    public User(Socket socket) throws IOException{
         this.userSocket = socket;
         this.out = new PrintStream(socket.getOutputStream());
         this.in = socket.getInputStream();
-        this.clientName = name;
         this.clientID = clientCount;
         clientCount++;
     }
@@ -171,5 +183,9 @@ class User{
 
     public String getName(){
         return this.clientName;
+    }
+
+    public void setName(String n){
+        this.clientName = n;
     }
 }
