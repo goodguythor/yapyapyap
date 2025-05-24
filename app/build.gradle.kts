@@ -28,6 +28,8 @@ dependencies {
     implementation("jakarta.websocket:jakarta.websocket-client-api:2.2.0")
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
     implementation("com.google.code.gson:gson:2.13.1")
+    // https://mvnrepository.com/artifact/org.postgresql/postgresql
+    implementation("org.postgresql:postgresql:42.7.5")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.

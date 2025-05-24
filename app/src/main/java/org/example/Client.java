@@ -13,7 +13,7 @@ public class Client{
     public Client(String h,int p, String u) throws IOException{
         this.host = h;
         this.port = p;
-        this.socket = new Socket(h,p);
+        this.socket = new Socket(this.host,this.port);
         this.out = new PrintWriter(socket.getOutputStream(),true);
         this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         this.username = u;
@@ -36,5 +36,9 @@ public class Client{
         socket.close();
         out.close();
         in.close();
+    }
+
+    public String getUsername(){
+        return this.username;
     }
 }
